@@ -1,4 +1,7 @@
-import { supabase } from "@/utils/supabase/server";
+// import { supabase } from "@/utils/supabase/server";
+// import { createClient } from "@/utils/supabase/server";
+import { supabase } from "@/utils/supabase/supa-page";
+
 import { Server as NetServer } from "http";
 import { NextApiRequest } from "next";
 import { Server as ServerIO } from "socket.io";
@@ -11,7 +14,7 @@ export const config = {
   },
 };
 
-const ioHandler = (req: NextApiRequest, res: any) => {
+const ioHandler = async (req: NextApiRequest, res: any) => {
   if (!res.socket.server.io) {
     const path = "/api/socket/io";
     const httpServer: NetServer = res.socket.server as any;
@@ -19,6 +22,7 @@ const ioHandler = (req: NextApiRequest, res: any) => {
       path: path,
       addTrailingSlash: false,
     });
+    // const supabase = await createClient();
 
     supabase
       .channel("online1")
@@ -30,8 +34,8 @@ const ioHandler = (req: NextApiRequest, res: any) => {
           table: "User",
         },
         (event: any) => {
-          console.log(event.new);
-          io.emit("aaaa", { data: event.new.name });
+          console.log({ event });
+          //   io.emit("aaaa", { data: event.new.name });
 
           // revalidatePath("/");
         }

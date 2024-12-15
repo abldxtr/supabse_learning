@@ -13,6 +13,7 @@
     "@prisma/client": "6.0.1",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "2.47.6",
+    "@tanstack/react-query": "^5.62.7",
     "next": "15.0.3",
     "prisma": "6.0.1",
     "react": "^18",

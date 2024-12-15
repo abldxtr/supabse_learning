@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import db from "@/lib/prisma";
 import { SocketProvider } from "@/provider/socket-provider";
+import { QueryProvider } from "@/provider/QueryClientProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,9 +18,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <SocketProvider>
-        <body className={inter.className}>{children}</body>
-      </SocketProvider>
+      <QueryProvider>
+        <SocketProvider>
+          <body className={inter.className}>{children}</body>
+        </SocketProvider>
+      </QueryProvider>
     </html>
   );
 }

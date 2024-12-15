@@ -58,10 +58,12 @@ export async function sendMassage() {
       password: "1234567",
     },
   });
+  // revalidatePath("/");
+  // redirect("/");
 
   // const message = await supabase
   //   .from("User")
   //   .insert({ email: faker.internet.email(), name: faker.person.fullName() });
 
-  console.log({ message });
+  // console.log({ message });
 }

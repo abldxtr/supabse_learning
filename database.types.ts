@@ -43,16 +43,19 @@ export type Database = {
           email: string
           id: number
           name: string
+          password: string
         }
         Insert: {
           email: string
           id?: number
           name: string
+          password: string
         }
         Update: {
           email?: string
           id?: number
           name?: string
+          password?: string
         }
         Relationships: []
       }
