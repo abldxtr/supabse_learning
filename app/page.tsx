@@ -15,11 +15,11 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const posts = await db.post.findMany({
-    where: {
-      userEmail: user?.email,
-    },
-  });
+  // const posts = await db.post.findMany({
+  //   where: {
+  //     userEmail: user?.email,
+  //   },
+  // });
   // const users = await db.user.findMany();
 
   return (
@@ -29,7 +29,7 @@ export default async function Home() {
       </div>
 
       <div className="text-bold flex flex-col ">
-        <UserList />
+        {/* <UserList /> */}
         <div className="flex ">
           {/* <div
             className="text-bold hover:bg-blue-100 flex cursor-pointer  "

@@ -1,8 +1,10 @@
 "use client";
 
 import { supabase } from "@/utils/supabase/supa-page";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { postsOptions } from "./server-get-post";
 
 export type posts = {
   id: string;
@@ -14,16 +16,18 @@ export type posts = {
 export default function Posts() {
   const [posts, setPosts] = useState<posts[]>([]);
 
-  const { data, isPending } = useQuery({
-    queryKey: ["posts"],
-    queryFn: async () => {
-      const res = await fetch("/api/posts");
-      const posts = await res.json();
-      console.log(posts.data);
-      setPosts(posts.data);
-      return posts.data;
-    },
-  });
+  // const { data, isPending } = useQuery({
+  //   queryKey: ["posts"],
+  //   queryFn: async () => {
+  //     const res = await fetch("/api/posts");
+  //     const posts = await res.json();
+  //     //   console.log(posts.data);
+  //     setPosts(posts.data);
+  //     return posts.data;
+  //   },
+  // });
+  const { data } = useSuspenseQuery(postsOptions);
+  const queryClient = useQueryClient();
 
   const channel = supabase
     .channel("schema-db-changes")
@@ -35,9 +39,24 @@ export default function Posts() {
         table: "Post",
       },
       (payload) => {
+        console.log("post insert");
+
         console.log(payload);
         let newPayload = payload.new as posts;
         setPosts((prev) => [...prev, newPayload]);
+
+        let newPost = payload.new as posts;
+
+        queryClient.setQueryData(["posts"], (oldData: any) => {
+          console.log({ oldData });
+          if (!oldData) return { data: [newPost] };
+          return { data: [...oldData.data, newPost] };
+        });
+
+        // queryClient.setQueryData(["posts"], (oldData: any) => {
+        //   if (!oldData) return [newPost];
+        //   return [...oldData.data, newPost];
+        // });
       }
     )
     .on(
@@ -48,7 +67,7 @@ export default function Posts() {
         table: "Post",
       },
       (payload) => {
-        // console.log("delteeeee");
+        console.log("delteeeee");
         console.log(payload);
         let newPayload = posts.filter((item) => item.id != payload.old.id);
         setPosts(newPayload);
@@ -57,13 +76,13 @@ export default function Posts() {
 
     .subscribe();
 
-  if (isPending) {
-    return <div>isloading... posts</div>;
-  }
+  // if (isPending) {
+  //   return <div>isloading... posts</div>;
+  // }
 
   return (
     <div>
-      {posts?.map((item, index) => {
+      {data.data.map((item: posts, index: number) => {
         return (
           <div className="flex items-center gap-x-3" key={index}>
             <div>{item.content} </div>
@@ -71,6 +90,8 @@ export default function Posts() {
           </div>
         );
       })}
+      <div>server</div>
+      {/* <div> {JSON.stringify(data)} </div> */}
     </div>
   );
 }
